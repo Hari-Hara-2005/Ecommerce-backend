@@ -11,7 +11,7 @@ exports.addCategory = async (req, res) => {
     }
 }
 
-exports.fecthData = async (req, res) => {
+exports.fetchData = async (req, res) => {
     try {
         const response = await pool.query('select * from category');
         res.status(200).json(response.rows);

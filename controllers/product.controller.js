@@ -43,7 +43,7 @@ exports.deleteProduct = async (req, res) => {
 };
 
 
-exports.fecthProduct = async (req, res) => {
+exports.fetchProduct = async (req, res) => {
     try {
         const response = await pool.query('select p.*,c.* from products p join category c on p.category_id = c.category_id');
         res.status(200).json(response.rows);

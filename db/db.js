@@ -2,11 +2,11 @@ require('dotenv').config();
 const { Pool } = require('pg');
 
 const pool = new Pool({
-    host: process.env.POSTGRES_HOST || 'localhost',
-    database: process.env.POSTGRES_DATABASE || 'Ecommerce',
-    user: process.env.POSTGRES_USER || 'postgres',
-    password: process.env.POSTGRES_PASSWORD || 'hari',
-    port: process.env.POSTGRES_PORT || 5432,
+    host: process.env.POSTGRES_HOST,
+    database: process.env.POSTGRES_DATABASE,
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    port: process.env.POSTGRES_PORT,
     ssl: process.env.POSTGRES_SSL === 'true' ? { rejectUnauthorized: false } : false
 });
 
