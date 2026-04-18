@@ -2,20 +2,35 @@
 const pool = require('../db/db');
 const uploadToCloudinary = require('../db/cloudinaryConfig');
 exports.addProduct = async (req, res) => {
-    const { name, price, desc, category, stock, status, image_url, public_id } = req.body;
+    const {
+        name,
+        price,
+        category,
+        image_url,
+        public_id,
+        hover_image,
+        strikeout_price,
+        rating,
+        label
+    } = req.body;
+
     try {
         const response = await pool.query(
-            `INSERT INTO products (product_name, product_price, product_desc, category_id, stock, status, image_url, public_id) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
-            [name, price, desc, category, stock, status, image_url, public_id]
+            `INSERT INTO products 
+            (product_name, product_price, category_id, image_url, public_id, hover_image, strikeout_price, rating, label) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+            RETURNING *`,
+            [name, price, category, image_url, public_id, hover_image, strikeout_price, rating, label]
         );
+
         res.status(200).json({
             message: 'Successfully Added!',
             product: response.rows[0]
         });
+
     } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' });
         console.log(error.message);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 };
 
@@ -77,18 +92,39 @@ exports.getProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
     const { id } = req.params;
-    const { name, price, desc, category, stock, status, image_url, public_id } = req.body;
+
+    const {
+        name,
+        price,
+        category,
+        image_url,
+        public_id,
+        hover_image,
+        strikeout_price,
+        rating,
+        label
+    } = req.body;
 
     try {
         await pool.query(
             `UPDATE products 
-             SET product_name = $1, product_desc = $2, product_price = $3, category_id = $4, status = $5, stock = $6, image_url = $7, public_id = $8 
-             WHERE product_id = $9`,
-            [name, desc, price, category, status, stock, image_url, public_id, id]
+             SET product_name = $1, 
+                 product_price = $2, 
+                 category_id = $3, 
+                 image_url = $4, 
+                 public_id = $5,
+                 hover_image = $6,
+                 strikeout_price = $7,
+                 rating = $8,
+                 label = $9
+             WHERE product_id = $10`,
+            [name, price, category, image_url, public_id, hover_image, strikeout_price, rating, label, id]
         );
+
         res.status(200).json({ message: 'Updated Successfully!' });
+
     } catch (error) {
         console.log(error.message);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-};
+};;
