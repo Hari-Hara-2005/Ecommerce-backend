@@ -10,15 +10,25 @@ exports.fetchBanner = async (req, res) => {
 }
 
 exports.addBanner = async (req, res) => {
-    const { image_url, public_id } = req.body;
+    const { image_url, public_id, link, is_mobile } = req.body;
+
     try {
-        const response = await pool.query('Insert into banner(image_url,public_id) values($1,$2) returning*', [image_url, public_id]);
-        res.status(200).json({ message: 'Added Sucessfully' });
-    }
-    catch (error) {
+        const response = await pool.query(
+            `INSERT INTO banner (image_url, public_id, link, is_mobile) 
+             VALUES ($1, $2, $3, $4) 
+             RETURNING *`,
+            [image_url, public_id, link, is_mobile]
+        );
+
+        res.status(200).json({
+            message: 'Added Successfully',
+            data: response.rows[0]
+        });
+    } catch (error) {
         console.log(error.message);
+        res.status(500).json({ error: 'Server error' });
     }
-}
+};
 
 exports.updateBanner = async (req, res) => {
     const { id } = req.params;
