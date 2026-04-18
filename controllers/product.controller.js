@@ -85,6 +85,41 @@ exports.fetchArrival = async (req, res) => {
     }
 };
 
+
+exports.fetchEarrings = async (req, res) => {
+    try {
+        const categoryId = 'd2a55103-b77b-4381-9830-d45c5973dbfa';
+
+        const response = await pool.query(
+            "SELECT * FROM products WHERE category_id = $1",
+            [categoryId]
+        );
+
+        res.status(200).json(response.rows);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ error: "Internal server Error.!" });
+    }
+};
+
+
+exports.fetchHairaccessories = async (req, res) => {
+    try {
+        const categoryId = '743e0e9b-f735-45df-8d43-55a9e3b8f314';
+
+        const response = await pool.query(
+            "SELECT * FROM products WHERE category_id = $1",
+            [categoryId]
+        );
+
+        res.status(200).json(response.rows);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ error: "Internal server Error.!" });
+    }
+};
+
+
 exports.getProduct = async (req, res) => {
     const { slug } = req.params;
 
