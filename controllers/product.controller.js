@@ -71,10 +71,13 @@ exports.fetchProduct = async (req, res) => {
 
 exports.fetchArrival = async (req, res) => {
     try {
+        const categoryId = '9e7361e1-92a9-48bf-b372-28dd38c0e237';
+
         const response = await pool.query(
             "SELECT * FROM products WHERE category_id = $1",
-            ['9e7361e1-92a9-48bf-b372-28dd38c0e237']
+            [categoryId]
         );
+
         res.status(200).json(response.rows);
     } catch (error) {
         console.log(error.message);
