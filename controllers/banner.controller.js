@@ -14,7 +14,7 @@ exports.addBanner = async (req, res) => {
 
     try {
         const response = await pool.query(
-            `INSERT INTO banner (image_url, public_id, link, is_mobile) 
+            `INSERT INTO banner (image_url, public_id, link, is_active) 
              VALUES ($1, $2, $3, $4) 
              RETURNING *`,
             [image_url, public_id, link, is_mobile]
