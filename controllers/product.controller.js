@@ -69,6 +69,19 @@ exports.fetchProduct = async (req, res) => {
 };
 
 
+exports.fetchArrival = async (req, res) => {
+    try {
+        const response = await pool.query(
+            "SELECT * FROM products WHERE category_name = $1",
+            ['New Arrival']
+        );
+        res.status(200).json(response.rows);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ error: "Internal server Error.!" });
+    }
+};
+
 exports.getProduct = async (req, res) => {
     const { slug } = req.params;
 
