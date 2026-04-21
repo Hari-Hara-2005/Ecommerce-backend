@@ -143,7 +143,6 @@ exports.getProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
     const { id } = req.params;
-
     const {
         name,
         price,
@@ -162,9 +161,9 @@ exports.updateProduct = async (req, res) => {
              SET product_name = $1, 
                  product_price = $2, 
                  category_id = $3, 
-                 image_url = $4, 
-                 public_id = $5,
-                 hover_image = $6,
+                 image_url = COALESCE($4, image_url), 
+                 public_id = COALESCE($5, public_id),
+                 hover_image = COALESCE($6, hover_image),
                  strikeout_price = $7,
                  rating = $8,
                  label = $9
@@ -173,9 +172,8 @@ exports.updateProduct = async (req, res) => {
         );
 
         res.status(200).json({ message: 'Updated Successfully!' });
-
     } catch (error) {
         console.log(error.message);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-};;
+};
