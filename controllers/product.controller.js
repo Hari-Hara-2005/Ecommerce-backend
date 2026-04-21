@@ -161,14 +161,11 @@ exports.updateProduct = async (req, res) => {
              SET product_name = $1, 
                  product_price = $2, 
                  category_id = $3, 
-                 image_url = COALESCE($4, image_url), 
-                 public_id = COALESCE($5, public_id),
-                 hover_image = COALESCE($6, hover_image),
-                 strikeout_price = $7,
-                 rating = $8,
-                 label = $9
-             WHERE product_id = $10`,
-            [name, price, category, image_url, public_id, hover_image, strikeout_price, rating, label, id]
+                 strikeout_price = $4,
+                 rating = $5,
+                 label = $6
+             WHERE product_id = $17`,
+            [name, price, category, strikeout_price, rating, label, id]
         );
 
         res.status(200).json({ message: 'Updated Successfully!' });
