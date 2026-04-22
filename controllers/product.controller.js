@@ -147,9 +147,6 @@ exports.updateProduct = async (req, res) => {
         name,
         price,
         category,
-        image_url,
-        public_id,
-        hover_image,
         strikeout_price,
         rating,
         label
