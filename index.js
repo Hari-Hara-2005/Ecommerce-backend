@@ -14,8 +14,6 @@ app.use('/api', require('./routes/order.routes'));
 app.use('/api', require('./routes/category.routes'));
 app.use('/api', require('./routes/cart.route'));
 app.use('/api', require('./routes/banner.routes'));
-app.use('/api', require('./routes/topbar.routes'));
-app.use('/api', require('./routes/deliveryprice.routes'));
-
-
-module.exports = serverless(app);
+app.listen(5000, () => {
+    console.log("The Serever Running in the Port : 5000");
+});
