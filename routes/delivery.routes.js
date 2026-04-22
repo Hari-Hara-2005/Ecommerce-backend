@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('../controllers/deliveryController');
+const controller = require('../controllers/deleveryPrice.controller');
 
 router.post('/delivery', controller.addDeliveryPrice);
 router.get('/delivery', controller.getAllDeliveryPrices);
