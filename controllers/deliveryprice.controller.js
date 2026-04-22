@@ -26,8 +26,11 @@ exports.addDeliveryPrice = async (req, res) => {
 // ✅ READ (All)
 exports.getAllDeliveryPrices = async (req, res) => {
     try {
-        const result = await pool.query('SELECT price FROM deliveryprice LIMIT 1');
-        res.status(200).json(result.rows[0]);
+        const result = await pool.query(
+            'SELECT * FROM deliveryprice'
+        );
+
+        res.status(200).json(result.rows);
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ error: "Server error" });
