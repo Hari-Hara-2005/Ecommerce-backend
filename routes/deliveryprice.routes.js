@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { addDeliveryPrice, getAllDeliveryPrices, updateDeliveryPrice, deleteDeliveryPrice } = require('../controllers/deleveryPrice.controller');
+const { addDeliveryPrice, getAllDeliveryPrices, updateDeliveryPrice, deleteDeliveryPrice } = require('../controllers/deleveryprice.controller');
 
 router.post('/delivery', addDeliveryPrice);
 router.get('/delivery', getAllDeliveryPrices);
