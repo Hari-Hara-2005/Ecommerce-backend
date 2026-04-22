@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('../controllers/deleveryPrice.controller');
+const { addDeliveryPrice, getAllDeliveryPrices, updateDeliveryPrice, deleteDeliveryPrice } = require('../controllers/deleveryPrice.controller');
 
-router.post('/delivery', controller.addDeliveryPrice);
-router.get('/delivery', controller.getAllDeliveryPrices);
-router.put('/delivery/:id', controller.updateDeliveryPrice);
-router.delete('/delivery/:id', controller.deleteDeliveryPrice);
+router.post('/delivery', addDeliveryPrice);
+router.get('/delivery', getAllDeliveryPrices);
+router.put('/delivery/:id', updateDeliveryPrice);
+router.delete('/delivery/:id',deleteDeliveryPrice);
 
 module.exports = router;
