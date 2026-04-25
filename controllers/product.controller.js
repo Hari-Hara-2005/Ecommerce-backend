@@ -12,6 +12,7 @@ exports.addProduct = async (req, res) => {
         strikeout_price,
         rating,
         label,
+        stock,
         in_stock,
         colors
     } = req.body;
@@ -22,7 +23,7 @@ exports.addProduct = async (req, res) => {
         const response = await pool.query(
             `INSERT INTO products 
             (product_name, product_price, category_id, image_url, public_id, hover_image, strikeout_price, rating, label, stock, in_stock, colors) 
-            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) 
+            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) 
             RETURNING *`,
             [
                 name,
@@ -34,6 +35,7 @@ exports.addProduct = async (req, res) => {
                 strikeout_price,
                 rating,
                 label,
+                stock || 0,
                 stockStatus,
                 colors || []
             ]
@@ -167,6 +169,7 @@ exports.updateProduct = async (req, res) => {
         strikeout_price,
         rating,
         label,
+        stock,
         in_stock,
         colors
     } = req.body;
@@ -182,8 +185,9 @@ exports.updateProduct = async (req, res) => {
                  strikeout_price = $4,
                  rating = $5,
                  label = $6,
-                 in_stock = $7,
-                 colors = $8
+                 stock = $7,
+                 in_stock = $8,
+                 colors = $9
              WHERE product_id = $10`,
             [
                 name,
@@ -192,6 +196,7 @@ exports.updateProduct = async (req, res) => {
                 strikeout_price,
                 rating,
                 label,
+                stock,
                 stockStatus,
                 colors,
                 id
