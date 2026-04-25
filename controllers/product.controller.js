@@ -11,16 +11,34 @@ exports.addProduct = async (req, res) => {
         hover_image,
         strikeout_price,
         rating,
-        label
+        label,
+        stock,
+        in_stock,
+        colors
     } = req.body;
 
     try {
+        const stockStatus = stock !== undefined ? stock > 0 : (in_stock ?? true);
+
         const response = await pool.query(
             `INSERT INTO products 
-            (product_name, product_price, category_id, image_url, public_id, hover_image, strikeout_price, rating, label) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+            (product_name, product_price, category_id, image_url, public_id, hover_image, strikeout_price, rating, label, stock, in_stock, colors) 
+            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) 
             RETURNING *`,
-            [name, price, category, image_url, public_id, hover_image, strikeout_price, rating, label]
+            [
+                name,
+                price,
+                category,
+                image_url,
+                public_id,
+                hover_image,
+                strikeout_price,
+                rating,
+                label,
+                stock || 0,
+                stockStatus,
+                colors || []
+            ]
         );
 
         res.status(200).json({
@@ -33,6 +51,7 @@ exports.addProduct = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 
 
 
@@ -140,19 +159,24 @@ exports.getProduct = async (req, res) => {
 };
 
 
-
 exports.updateProduct = async (req, res) => {
     const { id } = req.params;
+
     const {
         name,
         price,
         category,
         strikeout_price,
         rating,
-        label
+        label,
+        stock,
+        in_stock,
+        colors
     } = req.body;
 
     try {
+        const stockStatus = stock !== undefined ? stock > 0 : in_stock;
+
         await pool.query(
             `UPDATE products 
              SET product_name = $1, 
@@ -160,12 +184,27 @@ exports.updateProduct = async (req, res) => {
                  category_id = $3, 
                  strikeout_price = $4,
                  rating = $5,
-                 label = $6
-             WHERE product_id = $7`,
-            [name, price, category, strikeout_price, rating, label, id]
+                 label = $6,
+                 stock = $7,
+                 in_stock = $8,
+                 colors = $9
+             WHERE product_id = $10`,
+            [
+                name,
+                price,
+                category,
+                strikeout_price,
+                rating,
+                label,
+                stock,
+                stockStatus,
+                colors,
+                id
+            ]
         );
 
         res.status(200).json({ message: 'Updated Successfully!' });
+
     } catch (error) {
         console.log(error.message);
         res.status(500).json({ error: 'Internal Server Error' });
