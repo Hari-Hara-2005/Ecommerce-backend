@@ -185,7 +185,7 @@ exports.updateProduct = async (req, res) => {
                  strikeout_price = $4,
                  rating = $5,
                  label = $6,
-                 stock = $7,
+                 in_stock = $7,
                  in_stock = $8,
                  colors = $9
              WHERE product_id = $10`,
