@@ -166,6 +166,9 @@ exports.updateProduct = async (req, res) => {
         name,
         price,
         category,
+        image_url,
+        public_id,
+        hover_image,
         strikeout_price,
         rating,
         label,
@@ -175,21 +178,84 @@ exports.updateProduct = async (req, res) => {
     } = req.body;
 
     try {
+        // Fetch existing product to get old public_id
+        const existing = await pool.query(
+            'SELECT public_id, hover_image FROM products WHERE product_id = $1',
+            [id]
+        );
+
+        if (existing.rows.length === 0) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        const oldPublicId = existing.rows[0].public_id;
+
+        // If a new image is being set and old image exists, delete old from Cloudinary
+        if (public_id && oldPublicId && oldPublicId !== public_id) {
+            try {
+                await uploadToCloudinary.uploader.destroy(oldPublicId);
+            } catch (cloudinaryError) {
+                console.warn('Failed to delete old image from Cloudinary:', cloudinaryError.message);
+                // Non-fatal: continue with the update
+            }
+        }
+
         const stockStatus = stock !== undefined ? stock > 0 : in_stock;
 
-        await pool.query(
-            `UPDATE products 
-             SET product_name = $1, 
-                 product_price = $2, 
-                 category_id = $3, 
-                 strikeout_price = $4,
-                 rating = $5,
-                 label = $6,
-                 stock = $7,
-                 in_stock = $8,
-                 colors = $9
-             WHERE product_id = $10`,
-            [
+        // Build dynamic query to update image fields only if provided
+        const hasImageUpdate = image_url || public_id || hover_image;
+
+        let query;
+        let values;
+
+        if (hasImageUpdate) {
+            query = `
+                UPDATE products 
+                SET product_name    = $1, 
+                    product_price   = $2, 
+                    category_id     = $3, 
+                    image_url       = COALESCE($4, image_url),
+                    public_id       = COALESCE($5, public_id),
+                    hover_image     = COALESCE($6, hover_image),
+                    strikeout_price = $7,
+                    rating          = $8,
+                    label           = $9,
+                    stock           = $10,
+                    in_stock        = $11,
+                    colors          = $12
+                WHERE product_id = $13
+                RETURNING *`;
+            values = [
+                name,
+                price,
+                category,
+                image_url || null,
+                public_id || null,
+                hover_image || null,
+                strikeout_price,
+                rating,
+                label,
+                stock,
+                stockStatus,
+                colors,
+                id
+            ];
+        } else {
+            // No image fields sent — leave them untouched
+            query = `
+                UPDATE products 
+                SET product_name    = $1, 
+                    product_price   = $2, 
+                    category_id     = $3, 
+                    strikeout_price = $4,
+                    rating          = $5,
+                    label           = $6,
+                    stock           = $7,
+                    in_stock        = $8,
+                    colors          = $9
+                WHERE product_id = $10
+                RETURNING *`;
+            values = [
                 name,
                 price,
                 category,
@@ -200,10 +266,15 @@ exports.updateProduct = async (req, res) => {
                 stockStatus,
                 colors,
                 id
-            ]
-        );
+            ];
+        }
 
-        res.status(200).json({ message: 'Updated Successfully!' });
+        const result = await pool.query(query, values);
+
+        res.status(200).json({
+            message: 'Updated Successfully!',
+            product: result.rows[0]
+        });
 
     } catch (error) {
         console.log(error.message);
