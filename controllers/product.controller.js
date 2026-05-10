@@ -58,14 +58,9 @@ exports.addProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
     const { id } = req.params;
     try {
-        const result = await pool.query('SELECT public_id FROM products WHERE product_id = $1', [id]);
+        const result = await pool.query('SELECT product_id FROM products WHERE product_id = $1', [id]);
         if (result.rows.length === 0) {
             return res.status(404).json({ error: "Record not found or unauthorized" });
-        }
-
-        const public_id = result.rows[0].public_id;
-        if (public_id) {
-            await uploadToCloudinary.uploader.destroy(public_id);
         }
 
         await pool.query('DELETE FROM products WHERE product_id = $1', [id]);
@@ -75,7 +70,6 @@ exports.deleteProduct = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
-
 
 exports.fetchProduct = async (req, res) => {
     try {
